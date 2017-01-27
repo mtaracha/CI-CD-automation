@@ -9,17 +9,21 @@ RUN yum install -y epel-release \
     && yum install -y jq \
     && pip install virtualenv
 
-RUN mkdir -p /opt/loadtest
+ARG vault_endpoint=7.7.7.73:8200
+ENV role_id="7f538aca-bcdc-f6e1-fec8-2b6d8689a480"
+ENV secret_id="d3d156fc-2a0e-07dd-0aea-3e5b20705abd"
+
+RUN mkdir -p /opt/heavy-api
 
 COPY vault_auth_get.sh /opt/loadtest/
 
-RUN cd /opt/loadtest \
-	&& github_token=$(/opt/loadtest/vault_auth_get.sh -s 7.7.7.73:8200 -p secret/github/access_token -r 7f538aca-bcdc-f6e1-fec8-2b6d8689a480 -S d3d156fc-2a0e-07dd-0aea-3e5b20705abd) \
-	&& git clone https://$github_token:x-oauth@github.com/mtaracha/loadtest-webapp.git \
-	&& cd loadtest-webapp \
+RUN cd /opt/heavy-api \
+	&& github_token=$(/opt/loadtest/vault_auth_get.sh -s $vault_endpoint -p secret/github/access_token -r ${role_id} -S ${secret_id}) \
+	&& git clone https://$github_token:x-oauth@github.com/mtaracha/heavy-api.git \
+	&& cd heavy-api \
 	&& pip install --requirement requirements.txt
 
-EXPOSE 6000
+EXPOSE 5000
 
 COPY ./docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
