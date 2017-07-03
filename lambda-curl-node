@@ -1,0 +1,24 @@
+var http = require('http');
+
+exports.handler = function(event, context) {
+  console.log('start request to ' + event.url)
+  http.get(event.url, function(res) {
+    console.log("Got response: " + res.statusCode);
+    console.log("Got response: " + res.statusCode);
+    res.setEncoding('utf8');
+    res.on('data', function (chunk) {
+      console.log('BODY: ' + chunk);
+    });
+    context.succeed();
+  }).on('error', function(e) {
+    console.log("Got error: " + e.message);
+    context.done(null, 'FAILURE');
+  });
+
+  console.log('end request to ' + event.url);
+}
+
+// Payload
+//{
+//  "url": "http://live.eu-west-1.search.stepstone.com/offerSearch/v2/tools/jdnorm?query=developer"
+//}
