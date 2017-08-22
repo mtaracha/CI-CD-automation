@@ -20,5 +20,5 @@ exports.handler = function(event, context) {
 
 // Payload
 //{
-//  "url": "http://live.eu-west-1.search.stepstone.com/offerSearch/v2/tools/jdnorm?query=developer"
+//  "url": "http://google.com"
 //}
